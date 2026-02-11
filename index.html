@@ -1,21 +1,42 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Periodismo Crítico</title>
 
-    <!-- Fuentes (se quedan) -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <script type="module" crossorigin src="/LAB/assets/index-ac5c7a02.js"></script>
-    <link rel="stylesheet" href="/LAB/assets/index-c51ca4e8.css">
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Periodismo Crítico</title>
 
-  <body>
-    <div id="root"></div>
-    
-  </body>
+  <!-- Script de redirección para GitHub Pages -->
+  <script type="text/javascript">
+    // Single Page Apps for GitHub Pages
+    // https://github.com/rafgraph/spa-github-pages
+    // This script checks to see if a redirect is present in the query string,
+    // converts it back into a correct url and adds it to the
+    // browser's history using window.history.replaceState(...),
+    // which won't cause the browser to refresh the page.
+    (function (l) {
+      if (l.search[1] === '/') {
+        var decoded = l.search.slice(1).split('&').map(function (s) {
+          return s.replace(/~and~/g, '&')
+        }).join('?');
+        window.history.replaceState(null, null,
+          l.pathname.slice(0, -1) + decoded + l.hash
+        );
+      }
+    }(window.location))
+  </script>
+
+  <!-- Fuentes (se quedan) -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@400;700&display=swap"
+    rel="stylesheet" />
+  <script type="module" crossorigin src="/LAB/assets/index-ac5c7a02.js"></script>
+  <link rel="stylesheet" href="/LAB/assets/index-c51ca4e8.css">
+</head>
+
+<body>
+  <div id="root"></div>
+  
+</body>
+
 </html>
