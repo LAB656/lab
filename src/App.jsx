@@ -2826,31 +2826,19 @@ export default function App() {
           <div>
             <h3 className="text-white font-bold uppercase tracking-widest mb-4">Secciones</h3>
             <ul className="space-y-2">
-              <li>
-                <Link to="/categoria/Blog" className="hover:text-white font-bold text-orange-500">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link to="/categoria/Dossier" className="hover:text-white">
-                  Dossier
-                </Link>
-              </li>
-              <li>
-                <Link to="/categoria/Editorial" className="hover:text-white">
-                  Editorial
-                </Link>
-              </li>
-              <li>
-                <Link to="/categoria/Gobierno Universitario" className="hover:text-white">
-                  Gobierno Universitario
-                </Link>
-              </li>
-              <li>
-                <Link to="/categoria/Minuto LAB" className="hover:text-white">
-                  Minuto LAB
-                </Link>
-              </li>
+              {['Blog', 'Dossier', 'Editorial', 'Gobierno Universitario', 'Minuto LAB'].map((cat) => (
+                <li key={cat}>
+                  <Link
+                    to={`/categoria/${cat}`}
+                    className={`transition-colors italic ${selectedCategory === cat
+                      ? 'text-orange-500 font-bold'
+                      : 'text-stone-400 hover:text-white'
+                      }`}
+                  >
+                    {cat}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
