@@ -1,0 +1,1 @@
+Revert commit 8af8cb24551ec1c8596f2405e9ea22e56d398556: Restoring state to 'UI: Dynamic footer highlighting'.
