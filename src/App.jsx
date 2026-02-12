@@ -677,7 +677,7 @@ const Navbar = ({ session, setAuthOpen, handleSignOut, canEdit, handleCreateNew,
     <div className="border-t-2 border-black border-double py-2 bg-stone-200">
       <div className="container mx-auto px-4 flex justify-center md:justify-between items-center font-serif font-bold text-sm md:text-base">
         <nav className="flex flex-wrap justify-center gap-6 uppercase tracking-wider">
-          {['Blog', 'Dossier', 'Editorial', 'Gobierno Universitario', 'Minuto LAB'].map((cat) => (
+          {['Blog', 'Dossier', 'Editorial', 'Gobierno Universitario', 'Minuto LAB', 'Reportajes'].map((cat) => (
             <Link
               key={cat}
               to={`/categoria/${cat}`}
@@ -2826,7 +2826,7 @@ export default function App() {
           <div>
             <h3 className="text-white font-bold uppercase tracking-widest mb-4">Secciones</h3>
             <ul className="space-y-2">
-              {['Blog', 'Dossier', 'Editorial', 'Gobierno Universitario', 'Minuto LAB'].map((cat) => (
+              {['Blog', 'Dossier', 'Editorial', 'Gobierno Universitario', 'Minuto LAB', 'Reportajes'].map((cat) => (
                 <li key={cat}>
                   <Link
                     to={`/categoria/${cat}`}
