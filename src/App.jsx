@@ -27,9 +27,9 @@ import {
 } from 'lucide-react'
 
 // --- Supabase ---
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || ''
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
-const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null
+const supabaseUrl = 'https://niafglccpjvqhtfzbml.supabase.co'
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pYWZsZ2xjY3BqdnFodGZ6Ym1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzMDk1ODgsImV4cCI6MjA4NTg4NTU4OH0.b1j8C-htAiYJrdIXsnt5yTK5Tm3wRJjMZigGPgRDSGA'
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 // Simple Card Component for Layout
 const Card = ({ children, className = '' }) => (
@@ -1342,6 +1342,13 @@ const ArticleDetail = ({ articles, canEdit, handleEditArticle, handleDeleteArtic
 }
 
 // --- FRONTPAGE COMPONENT (ACTUALIZADO CON FILTRADO) ---
+// Helper: extraer la primera imagen del contenido Markdown
+const getFirstImage = (content) => {
+  if (!content) return null
+  const match = content.match(/!\[([^\]]*)\]\(([^)]+)\)/)
+  return match ? { alt: match[1], url: match[2] } : null
+}
+
 const FrontPage = ({ loading, articles, session, setAuthOpen, canEdit, handleCreateNew, handleEditArticle, handleDeleteArticle }) => {
   const { category: selectedCategory } = useParams()
   if (loading) {
@@ -1404,6 +1411,16 @@ const FrontPage = ({ loading, articles, session, setAuthOpen, canEdit, handleCre
 
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12 border-b-2 border-black pb-12">
         <div className="lg:col-span-8 group">
+          {/* Imagen destacada del artículo principal */}
+          {getFirstImage(mainStory.content) && (
+            <Link to={`/articulo/${mainStory.id}`} className="block mb-4">
+              <img
+                src={getFirstImage(mainStory.content).url}
+                alt={getFirstImage(mainStory.content).alt || mainStory.title}
+                className="w-full h-64 md:h-80 object-cover border-2 border-stone-800"
+              />
+            </Link>
+          )}
           <div className="mb-2 flex items-center gap-2">
             <span className="bg-orange-600 text-white text-[10px] font-bold px-2 py-0.5 uppercase tracking-widest">
               {mainStory.category}
@@ -1521,6 +1538,17 @@ const FrontPage = ({ loading, articles, session, setAuthOpen, canEdit, handleCre
             >
               {article.title}
             </Link>
+
+            {/* Miniatura si tiene imagen */}
+            {getFirstImage(article.content) && (
+              <Link to={`/articulo/${article.id}`} className="block mb-3">
+                <img
+                  src={getFirstImage(article.content).url}
+                  alt={getFirstImage(article.content).alt || article.title}
+                  className="w-full h-32 object-cover border border-stone-300"
+                />
+              </Link>
+            )}
 
             <p className="text-stone-600 font-serif italic text-sm mb-4 line-clamp-3 flex-grow">{article.subtitle}</p>
 
