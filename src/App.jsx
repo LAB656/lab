@@ -27,10 +27,12 @@ import {
 } from 'lucide-react'
 
 // --- Supabase ---
+console.log('🔍 VITE_SUPABASE_URL:', import.meta.env.VITE_SUPABASE_URL)
+console.log('🔍 VITE_SUPABASE_ANON_KEY:', import.meta.env.VITE_SUPABASE_ANON_KEY ? '✅ Definida' : '❌ NO definida')
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || ''
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+console.log('🔍 supabase client:', supabaseUrl && supabaseKey ? '✅ Creado' : '❌ NULL (modo demo)')
 const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null
-
 // Simple Card Component for Layout
 const Card = ({ children, className = '' }) => (
   <div className={`bg-white border-2 border-stone-800 shadow-sm ${className}`}>{children}</div>
