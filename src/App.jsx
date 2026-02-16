@@ -679,7 +679,7 @@ const Navbar = ({ session, setAuthOpen, handleSignOut, canEdit, handleCreateNew,
     <div className="border-t-2 border-black border-double py-2 bg-stone-200">
       <div className="container mx-auto px-4 flex justify-center md:justify-between items-center font-serif font-bold text-sm md:text-base">
         <nav className="flex flex-wrap justify-center gap-6 uppercase tracking-wider">
-          {['Reportajes', 'Blog', 'Dossier', 'Editorial', 'Gobierno Universitario', 'Minuto LAB'].map((cat) => (
+          {['Reportajes', 'Blog', 'Dossier', 'Editorial', 'Gobierno Universitario'].map((cat) => (
             <Link
               key={cat}
               to={`/categoria/${cat}`}
@@ -2387,7 +2387,7 @@ const SubscribeModal = ({ isOpen, onClose }) => {
                   Temas de interés <span className="text-stone-400 text-xs">(selecciona uno o más)</span>
                 </label>
                 <div className="grid grid-cols-2 gap-3">
-                  {['Blog', 'Dossier', 'Reportajes', 'Editorial', 'Gobierno Universitario', 'Minuto LAB'].map((interest) => (
+                  {['Blog', 'Dossier', 'Reportajes', 'Editorial', 'Gobierno Universitario'].map((interest) => (
                     <label
                       key={interest}
                       className={`flex items-center gap-2 p-3 border-2 cursor-pointer transition-all ${interests.includes(interest)
@@ -2855,7 +2855,7 @@ export default function App() {
           <div>
             <h3 className="text-white font-bold uppercase tracking-widest mb-4">Secciones</h3>
             <ul className="space-y-2">
-              {['Reportajes', 'Blog', 'Dossier', 'Editorial', 'Gobierno Universitario', 'Minuto LAB'].map((cat) => (
+              {['Reportajes', 'Blog', 'Dossier', 'Editorial', 'Gobierno Universitario'].map((cat) => (
                 <li key={cat}>
                   <Link
                     to={`/categoria/${cat}`}
