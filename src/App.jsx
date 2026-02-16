@@ -1346,6 +1346,14 @@ const ArticleDetail = ({ articles, canEdit, handleEditArticle, handleDeleteArtic
 // --- FRONTPAGE COMPONENT (ACTUALIZADO CON FILTRADO) ---
 const FrontPage = ({ loading, articles, session, setAuthOpen, canEdit, handleCreateNew, handleEditArticle, handleDeleteArticle }) => {
   const { category: selectedCategory } = useParams()
+  
+  // Helper function para extraer primera imagen del contenido
+  const getFirstImage = (content) => {
+    if (!content) return null;
+    const imgMatch = content.match(/!\[([^\]]*)\]\(([^)]+)\)/);
+    return imgMatch ? imgMatch[2] : null;
+  };
+
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
@@ -1517,6 +1525,22 @@ const FrontPage = ({ loading, articles, session, setAuthOpen, canEdit, handleCre
               )}
             </div>
 
+            {/* Miniatura de imagen si existe */}
+            {(() => {
+              const firstImage = getFirstImage(article.content);
+              return firstImage ? (
+                <Link to={`/articulo/${article.id}`} className="block mb-3 overflow-hidden rounded">
+                  <img
+                    src={firstImage}
+                    alt={article.title}
+                    className="w-full h-48 object-cover border border-stone-200 hover:opacity-90 transition-opacity"
+                    loading="lazy"
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                </Link>
+              ) : null;
+            })()}
+
             <Link
               to={`/articulo/${article.id}`}
               className="text-2xl font-serif font-bold leading-tight mb-2 cursor-pointer hover:text-stone-600 transition-colors block"
@@ -1538,6 +1562,7 @@ const FrontPage = ({ loading, articles, session, setAuthOpen, canEdit, handleCre
     </div>
   )
 }
+
 
 
 // --- CONTADOR DE VISITAS (COMPONENTE SEPARADO) ---
