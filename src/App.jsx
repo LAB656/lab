@@ -26,6 +26,8 @@ import {
   Video,
 } from 'lucide-react'
 
+import BlogTradicional from './components/BlogTradicional'
+
 // --- Supabase ---
 console.log('🔍 VITE_SUPABASE_URL:', import.meta.env.VITE_SUPABASE_URL)
 console.log('🔍 VITE_SUPABASE_ANON_KEY:', import.meta.env.VITE_SUPABASE_ANON_KEY ? '✅ Definida' : '❌ NO definida')
@@ -679,7 +681,7 @@ const Navbar = ({ session, setAuthOpen, handleSignOut, canEdit, handleCreateNew,
     <div className="border-t-2 border-black border-double py-2 bg-stone-200">
       <div className="container mx-auto px-4 flex justify-center md:justify-between items-center font-serif font-bold text-sm md:text-base">
         <nav className="flex flex-wrap justify-center gap-6 uppercase tracking-wider">
-          {['Reportajes', 'Blog', 'Dossier', 'Editorial', 'Gobierno Universitario'].map((cat) => (
+          {['Reportajes', 'Dossier', 'Editorial', 'Gobierno Universitario'].map((cat) => (
             <Link
               key={cat}
               to={`/categoria/${cat}`}
@@ -689,6 +691,12 @@ const Navbar = ({ session, setAuthOpen, handleSignOut, canEdit, handleCreateNew,
               {cat}
             </Link>
           ))}
+          <Link
+            to="/blog"
+            className="hover:text-orange-600 transition-colors decoration-2 underline-offset-4 hover:underline"
+          >
+            Blog
+          </Link>
         </nav>
         <div className="hidden md:flex items-center gap-4 text-stone-500">
           <Search size={18} className="cursor-pointer hover:text-black" />
@@ -2813,7 +2821,7 @@ export default function App() {
               )
             }
           />
-          <Route
+         <Route
             path="/editar/:id"
             element={
               canEdit ? (
@@ -2831,6 +2839,17 @@ export default function App() {
                   Debes iniciar sesión para editar.
                 </div>
               )
+            }
+          />
+          <Route
+            path="/blog"
+            element={
+              <BlogTradicional
+                articles={articles}
+                canEdit={canEdit}
+                handleEditArticle={handleEditArticle}
+                handleDeleteArticle={handleDeleteArticle}
+              />
             }
           />
         </Routes>
