@@ -26,8 +26,7 @@ import {
   Video,
 } from 'lucide-react'
 
-import BlogTradicional from './components/BlogTradicional'
-
+import VisitCounter from './components/VisitCounter'
 // --- Supabase ---
 console.log('🔍 VITE_SUPABASE_URL:', import.meta.env.VITE_SUPABASE_URL)
 console.log('🔍 VITE_SUPABASE_ANON_KEY:', import.meta.env.VITE_SUPABASE_ANON_KEY ? '✅ Definida' : '❌ NO definida')
@@ -681,7 +680,7 @@ const Navbar = ({ session, setAuthOpen, handleSignOut, canEdit, handleCreateNew,
     <div className="border-t-2 border-black border-double py-2 bg-stone-200">
       <div className="container mx-auto px-4 flex justify-center md:justify-between items-center font-serif font-bold text-sm md:text-base">
         <nav className="flex flex-wrap justify-center gap-6 uppercase tracking-wider">
-          {['Reportajes', 'Dossier', 'Editorial', 'Gobierno Universitario'].map((cat) => (
+          {['Reportajes', 'Blog', 'Dossier', 'Editorial', 'Gobierno Universitario'].map((cat) => (
             <Link
               key={cat}
               to={`/categoria/${cat}`}
@@ -691,12 +690,6 @@ const Navbar = ({ session, setAuthOpen, handleSignOut, canEdit, handleCreateNew,
               {cat}
             </Link>
           ))}
-          <Link
-            to="/blog"
-            className="hover:text-orange-600 transition-colors decoration-2 underline-offset-4 hover:underline"
-          >
-            Blog
-          </Link>
         </nav>
         <div className="hidden md:flex items-center gap-4 text-stone-500">
           <Search size={18} className="cursor-pointer hover:text-black" />
@@ -1574,71 +1567,6 @@ const FrontPage = ({ loading, articles, session, setAuthOpen, canEdit, handleCre
 
 
 // --- CONTADOR DE VISITAS (COMPONENTE SEPARADO) ---
-const VisitCounter = () => {
-  const [visitCount, setVisitCount] = useState(0)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchAndUpdateVisits = async () => {
-      if (!supabase) {
-        const localCount = parseInt(localStorage.getItem('visit_count') || '0')
-        const newCount = localCount + 1
-        localStorage.setItem('visit_count', newCount.toString())
-        setVisitCount(newCount)
-        setLoading(false)
-        return
-      }
-
-      try {
-        const { data, error } = await supabase
-          .from('site_stats')
-          .select('visit_count')
-          .eq('id', 1)
-          .single()
-
-        if (error && error.code === 'PGRST116') {
-          const { data: newData, error: insertError } = await supabase
-            .from('site_stats')
-            .insert({ id: 1, visit_count: 1 })
-            .select()
-            .single()
-
-          if (!insertError) setVisitCount(1)
-        } else if (data) {
-          const newCount = (data.visit_count || 0) + 1
-          await supabase
-            .from('site_stats')
-            .update({ visit_count: newCount })
-            .eq('id', 1)
-          setVisitCount(newCount)
-        }
-      } catch (err) {
-        console.error('Error updating visits:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchAndUpdateVisits()
-  }, [])
-
-  if (loading) {
-    return (
-      <div className="text-xs text-stone-500">
-        Cargando contador...
-      </div>
-    )
-  }
-
-  return (
-    <div className="text-xs text-stone-400">
-      <p className="font-bold uppercase tracking-wider mb-1">Visitas Totales</p>
-      <p className="text-2xl font-mono font-bold text-orange-500">
-        {visitCount.toLocaleString()}
-      </p>
-    </div>
-  )
-}
 
 // --- TÉRMINOS DE USO COMPONENT ---
 const TermsOfUseModal = ({ isOpen, onClose }) => {
@@ -2821,7 +2749,7 @@ export default function App() {
               )
             }
           />
-         <Route
+          <Route
             path="/editar/:id"
             element={
               canEdit ? (
@@ -2841,17 +2769,6 @@ export default function App() {
               )
             }
           />
-          <Route
-            path="/blog"
-            element={
-              <BlogTradicional
-                articles={articles}
-                canEdit={canEdit}
-                handleEditArticle={handleEditArticle}
-                handleDeleteArticle={handleDeleteArticle}
-              />
-            }
-          />
         </Routes>
       </main>
 
@@ -2867,7 +2784,7 @@ export default function App() {
 
             {/* CONTADOR DE VISITAS */}
             <div className="mt-4 pt-4 border-t border-stone-700">
-              <VisitCounter />
+              <VisitCounter supabase={supabase} />
             </div>
           </div>
 
