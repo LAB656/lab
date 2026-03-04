@@ -1,81 +1,48 @@
 // ============================================
-// CONTADOR DE VISITAS MEJORADO - PROFESIONAL
+// CONTADOR DE VISITAS - POR PÁGINA/SESIÓN
 // ============================================
-// Características:
-// ✅ Visitas únicas por fingerprint del navegador
-// ✅ Rate limiting (no cuenta refreshes rápidos)
+// Comportamiento:
+// ✅ Cuenta cada página distinta que visita el usuario en la sesión
+// ✅ Si navega de una nota a otra, ambas cuentan
+// ✅ El refresh de la misma página NO vuelve a contar
+// ✅ Al cerrar y reabrir el navegador, cuenta de nuevo (nueva sesión)
 // ✅ Fallback seguro si Supabase falla
-// ✅ Estadísticas diarias y totales
-// ✅ Caché local para mejorar rendimiento
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-// Generar fingerprint del navegador (simple pero efectivo)
-const getBrowserFingerprint = () => {
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
-  ctx.textBaseline = 'top'
-  ctx.font = '14px Arial'
-  ctx.fillText('fingerprint', 2, 2)
-  const canvasData = canvas.toDataURL()
-  
-  const data = {
-    userAgent: navigator.userAgent,
-    language: navigator.language,
-    platform: navigator.platform,
-    screenResolution: `${screen.width}x${screen.height}`,
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    canvas: canvasData.slice(-50), // últimos 50 chars del canvas
-  }
-  
-  // Crear hash simple
-  const str = JSON.stringify(data)
-  let hash = 0
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i)
-    hash = ((hash << 5) - hash) + char
-    hash = hash & hash // Convert to 32bit integer
-  }
-  return `fp_${Math.abs(hash).toString(36)}`
-}
-
-const VisitCounter = ({ supabase }) => {
+const VisitCounter = ({ supabase, pageKey }) => {
   const [visitCount, setVisitCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
     const trackVisit = async () => {
-      // Si no hay Supabase, mostrar contador estático
       if (!supabase) {
-        setVisitCount(869) // Valor actual en Supabase
+        setVisitCount(869)
         setLoading(false)
         setError('Modo sin conexión - contador estático')
         return
       }
 
       try {
-        const fingerprint = getBrowserFingerprint()
-        const today = new Date().toISOString().split('T')[0]
-        
-        // Verificar si ya visitó hoy
-        const lastVisit = localStorage.getItem('last_visit')
-        const lastFingerprint = localStorage.getItem('fingerprint')
-        
-        // Si ya visitó hoy con el mismo fingerprint, solo obtener el contador
-        if (lastVisit === today && lastFingerprint === fingerprint) {
+        // Clave única por página en esta sesión
+        const sessionKey = `visited_${pageKey || '/'}`
+        const alreadyCounted = sessionStorage.getItem(sessionKey)
+
+        if (alreadyCounted) {
+          // Ya contamos esta página en esta sesión — solo leer el total actual
           const { data } = await supabase
             .from('site_stats')
             .select('visit_count')
             .eq('id', 1)
             .single()
-          
+
           if (data) setVisitCount(data.visit_count)
           setLoading(false)
           return
         }
 
-        // Nueva visita - incrementar contador
+        // Página nueva en esta sesión — incrementar
         const { data: currentData, error: fetchError } = await supabase
           .from('site_stats')
           .select('visit_count')
@@ -83,8 +50,8 @@ const VisitCounter = ({ supabase }) => {
           .single()
 
         if (fetchError && fetchError.code === 'PGRST116') {
-          // Primera vez - crear registro con 869 como base
-          const { data: newData, error: insertError } = await supabase
+          // Primer registro — crear con valor base
+          const { error: insertError } = await supabase
             .from('site_stats')
             .insert({ id: 1, visit_count: 869, last_updated: new Date().toISOString() })
             .select()
@@ -92,38 +59,35 @@ const VisitCounter = ({ supabase }) => {
 
           if (!insertError) {
             setVisitCount(869)
-            localStorage.setItem('last_visit', today)
-            localStorage.setItem('fingerprint', fingerprint)
+            sessionStorage.setItem(sessionKey, '1')
           }
         } else if (currentData) {
-          // Incrementar contador
           const newCount = (currentData.visit_count || 0) + 1
-          
+
           const { error: updateError } = await supabase
             .from('site_stats')
-            .update({ 
+            .update({
               visit_count: newCount,
-              last_updated: new Date().toISOString()
+              last_updated: new Date().toISOString(),
             })
             .eq('id', 1)
 
           if (!updateError) {
             setVisitCount(newCount)
-            localStorage.setItem('last_visit', today)
-            localStorage.setItem('fingerprint', fingerprint)
+            sessionStorage.setItem(sessionKey, '1')
           }
         }
       } catch (err) {
         console.error('Error tracking visit:', err)
         setError('Error al actualizar contador')
-        setVisitCount(869) // Fallback al último valor conocido
+        setVisitCount(869)
       } finally {
         setLoading(false)
       }
     }
 
     trackVisit()
-  }, [supabase])
+  }, [supabase, pageKey])
 
   if (loading) {
     return (

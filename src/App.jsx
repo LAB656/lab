@@ -2784,7 +2784,7 @@ export default function App() {
 
             {/* CONTADOR DE VISITAS */}
             <div className="mt-4 pt-4 border-t border-stone-700">
-              <VisitCounter supabase={supabase} />
+              <VisitCounter supabase={supabase} pageKey={location.pathname} />
             </div>
           </div>
 
